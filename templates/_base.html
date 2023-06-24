@@ -1,0 +1,63 @@
+{# {% load compress %} #}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django + HTMX + Tailwind CSS</title>
+
+    {# {% compress css %} #}
+    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+    {# {% endcompress %} #}
+
+</head>
+
+<body>
+    <header class="bg-red-500">
+        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+            <div class="flex lg:flex-1">
+                <a href="#" class="text-sm font-semibold leading-6 text-white">
+                    Polls
+                </a>
+            </div>
+            <div class="hidden lg:flex lg:gap-x-12">
+                <a href="#" class="text-sm font-semibold leading-6 text-white">Explore</a>
+                <a href="#" class="text-sm font-semibold leading-6 text-white">Track</a>
+            </div>
+            <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+                <a href="#" class="text-sm font-semibold leading-6 text-white">Log in <span
+                        aria-hidden="true">&rarr;</span></a>
+            </div>
+        </nav>
+    </header>
+    {% block content %}
+    {% endblock content %}
+
+    {# {% compress js %} #}
+    <script type="text/javascript" src="{% static 'src/htmx.js' %}"></script>
+    {# {% endcompress %} #}
+
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        })
+        {% if debug %}
+        if (typeof window.htmx !== "undefined") {
+            htmx.on("htmx:afterSettle", function (detail) {
+                if (
+                    typeof window.djdt !== "undefined"
+                    && detail.target instanceof HTMLBodyElement
+                ) {
+                    djdt.show_toolbar();
+                }
+            });
+        }
+        {% endif %}
+    </script>
+</body>
+
+</html>

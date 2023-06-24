@@ -1,13 +1,19 @@
-{% load static %}
+{% extends "_base.html" %}
 
-<link rel="stylesheet" href="{% static 'polls/style.css' %}">
-
+{% block content %}
 {% if latest_question_list %}
-<ul>
-    {% for question in latest_question_list %}
-    <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
-</ul>
+{% for question in latest_question_list %}
+<div class="grid grid-cols-1 gap-8 m-8 xl:m-12 xl:gap-12 md:grid-cols-2 xl:grid-cols-3">
+    <div class="p-8 space-y-3 border-2 border-gray-400 rounded-xl hover:shadow-md">
+        <h1 class="text-2xl font-semibold text-gray-700 capitalize"><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></h1>
+        <p class="text-gray-500">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident ab nulla quod dignissimos vel non
+            corrupti doloribus voluptatum eveniet
+        </p>
+    </div>
+</div>
+{% endfor %}
 {% else %}
 <p>No polls are available.</p>
 {% endif %}
+{% endblock content %}
