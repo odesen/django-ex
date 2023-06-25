@@ -1,10 +1,12 @@
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
 
-from .models import Choice, Question
+from .models import Choice, Question, Vote
 
 
 class IndexView(generic.ListView):
@@ -36,7 +38,26 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = "polls/results.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context |= Choice.objects.filter(question=self.kwargs.get("pk")).aggregate(
+            vote_count=Count("vote")
+        )
+        counts = (
+            Choice.objects.filter(question=self.kwargs.get("pk"))
+            .values("choice_text")
+            .annotate(
+                choice_count=Count("vote"),
+            )
+            .order_by("-choice_count")
+        )
+        for count in counts:
+            count["choice_percent"] = count["choice_count"] / context["vote_count"]
+        context["choice_count"] = counts
+        return context
 
+
+@login_required
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
@@ -52,8 +73,9 @@ def vote(request, question_id):
             },
         )
     else:
-        selected_choice.votes += 1
-        selected_choice.save()
+        Vote.objects.create(
+            user=request.user, choice=selected_choice, vote_date=timezone.now()
+        )
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.

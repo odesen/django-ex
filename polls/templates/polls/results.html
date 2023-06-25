@@ -1,9 +1,14 @@
-<h1>{{ question.question_text }}</h1>
+{% extends "_base.html" %}
 
-<ul>
-    {% for choice in question.choice_set.all %}
-    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+{% block content %}
+<div class="flex grid-cols-1 justify-center m-8">
+    <h1 class="text-4xl font-semibold leading-6 text-gray-900">{{ question.question_text }}</h1>
+    <div class="mt-6 space-y-6">
+    {% for choice in choice_count %}
+        <div class="flex items-center gap-x-3">
+            <p class="block text-sm font-medium leading-6 text-gray-900">{{ choice.choice_text }} : {{ choice.choice_percent }} ({{ choice.choice_count }} vote{{ choice.choice_count|pluralize }})</p>
+        </div>
     {% endfor %}
-</ul>
-
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+    </div>
+</div>
+{% endblock content %}
