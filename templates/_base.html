@@ -20,7 +20,7 @@
     <header class="bg-red-500">
         <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
             <div class="flex lg:flex-1">
-                <a href="#" class="text-sm font-semibold leading-6 text-white">
+                <a href="{% url 'polls:index' %}" class="text-sm font-semibold leading-6 text-white">
                     Polls
                 </a>
             </div>
@@ -29,8 +29,12 @@
                 <a href="#" class="text-sm font-semibold leading-6 text-white">Track</a>
             </div>
             <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-                <a href="#" class="text-sm font-semibold leading-6 text-white">Log in <span
+                {% if user.is_authenticated %}
+                <p class="text-sm font-semibold leading-6 text-white">{{ user.username }} <a href="{% url 'polls:logout' %}" class="text-sm font-semibold leading-6 text-white">Log out</a></p>
+                {% else %}
+                <a href="{% url 'polls:login' %}" class="text-sm font-semibold leading-6 text-white">Log in <span
                         aria-hidden="true">&rarr;</span></a>
+                {% endif%}
             </div>
         </nav>
     </header>
