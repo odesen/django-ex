@@ -54,7 +54,9 @@ class ResultsView(generic.DetailView):
             .order_by("-choice_count")
         )
         for count in counts:
-            count["choice_percent"] = count["choice_count"] / context["vote_count"]
+            count["choice_percent"] = (
+                count["choice_count"] / context["vote_count"]
+            ) * 100
         context["choice_count"] = counts
         return context
 

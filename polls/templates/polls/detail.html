@@ -1,17 +1,21 @@
 {% extends "_base.html" %}
 
 {% block content %}
-<div class="flex grid-cols-1 justify-center m-8">
-    <form action="{% url 'polls:vote' question.id %}" method="post">
+<div class="flex justify-center m-8 px-1 py-3">
+    <form action="{% url 'polls:vote' question.id %}" method="post" class="max-w-md w-full mx-auto">
         {% csrf_token %}
         <fieldset>
-            <legend class="text-4xl font-semibold leading-6 text-gray-900">{{ question.question_text }}</legend>
-            <div class="mt-6 space-y-6">
+            <legend class="font-semibold leading-6 text-gray-900">{{ question.question_text }}</legend>
+            <div class="mt-4 border-y">
             {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
             {% for choice in question.choice_set.all %}
-                <div class="flex items-center gap-x-3">
-                    <input id="choice{{ forloop.counter }}" name="choice" value="{{ choice.id }}" type="radio" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                    <label for="choice{{ forloop.counter }}" class="block text-sm font-medium leading-6 text-gray-900">{{ choice.choice_text }}</label>
+                <div class="flex items-start py-4 border-t relative">
+                    <div class="leading-6 flex-1 min-w-0">
+                        <label for="choice{{ forloop.counter }}" class="font-medium leading-6 text-gray-900">{{ choice.choice_text }}</label>
+                    </div>
+                    <div class="flex items-center ml-3 h-6">
+                        <input id="choice{{ forloop.counter }}" name="choice" value="{{ choice.id }}" type="radio" class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                    </div>
                 </div>
             {% endfor %}
             </div>
